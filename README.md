@@ -49,11 +49,17 @@ This project simplifies traditional accounting workflows by transforming raw tra
 ## 📂 Project Structure  
 
 mini-accounting-software/
+
 │── index.html # Application interface
+
 │── style.css # UI design & theme styles
+
 │── script.js # Accounting logic & automation
+
 │── logo.png # Application logo
+
 │── preview.png # UI preview
+
 
 
 ---
