@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finova | Premium Mini Accounting Software</title>
+    <meta name="description"
+        content="A powerful and sleek mini accounting software for managing transactions, ledgers, and financial reports.">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF & autoTable for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light-mode">
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="overlay">
+        <!-- SVG Background Animation -->
+        <svg class="bg-blobs" preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
+            <path fill="#9b5de5" class="out-top"
+                d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z" />
+            <path fill="#f15bb5" class="in-top"
+                d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z" />
+            <path fill="#00bbf9" class="out-bottom"
+                d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z" />
+            <path fill="#00f5d4" class="in-bottom"
+                d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
+        </svg>
+
+        <div class="login-card">
+            <!-- Login View -->
+            <div id="login-view">
+                <div class="login-header">
+                    <img src="finova_logo.png" alt="Finova Logo" class="brand-logo">
+                    <h1>Finova Login</h1>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" placeholder="Enter password" required>
+                            <i class="fas fa-eye-slash toggle-pw" id="togglePassword"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <div id="login-error" class="error-msg">Invalid credentials. Try again.</div>
+                    <p class="mt-4 text-center">Don't have an account? <a href="#" id="show-register">Register here</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Register View -->
+            <div id="register-view" class="hidden">
+                <div class="login-header">
+                    <img src="finova_logo.png" alt="Finova Logo" class="brand-logo">
+                    <h1>Create Finova Account</h1>
+                </div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" placeholder="Choose a password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    <p class="mt-4 text-center">Already have an account? <a href="#" id="show-login">Login here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="app-wrapper hidden">
+        <!-- Vertical Sidebar (Consolidated Header) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="finova_logo.png" alt="Finova Logo" class="sidebar-logo">
+                <span>Finova</span>
+            </div>
+
+            <div class="sidebar-top-meta">
+                <h1 id="section-title">Dashboard</h1>
+                <div class="sidebar-actions">
+                    <div class="theme-switch-wrapper">
+                        <label class="switch">
+                            <input id="theme-toggle" type="checkbox" />
+                            <div class="slider round">
+                                <div class="sun-moon">
+                                    <svg id="moon-dot-1" class="moon-dot" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="moon-dot-2" class="moon-dot" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="moon-dot-3" class="moon-dot" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="light-ray-1" class="light-ray" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="light-ray-2" class="light-ray" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="light-ray-3" class="light-ray" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+
+                                    <svg id="cloud-1" class="cloud-dark" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="cloud-2" class="cloud-dark" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="cloud-3" class="cloud-dark" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="cloud-4" class="cloud-light" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="cloud-5" class="cloud-light" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                    <svg id="cloud-6" class="cloud-light" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="50"></circle>
+                                    </svg>
+                                </div>
+                                <div class="stars">
+                                    <svg id="star-1" class="star" viewBox="0 0 20 20">
+                                        <path
+                                            d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z">
+                                        </path>
+                                    </svg>
+                                    <svg id="star-2" class="star" viewBox="0 0 20 20">
+                                        <path
+                                            d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z">
+                                        </path>
+                                    </svg>
+                                    <svg id="star-3" class="star" viewBox="0 0 20 20">
+                                        <path
+                                            d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z">
+                                        </path>
+                                    </svg>
+                                    <svg id="star-4" class="star" viewBox="0 0 20 20">
+                                        <path
+                                            d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#journal" class="nav-item" data-section="journal">
+                    <i class="fas fa-book"></i>
+                    <span>Journal Entry</span>
+                </a>
+                <a href="#ledger" class="nav-item" data-section="ledger">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Ledger</span>
+                </a>
+                <a href="#trial-balance" class="nav-item" data-section="trial-balance">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Trial Balance</span>
+                </a>
+                <a href="#trading-pl" class="nav-item" data-section="trading-pl">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Trading & P&L</span>
+                </a>
+                <a href="#balance-sheet" class="nav-item" data-section="balance-sheet">
+                    <i class="fas fa-university"></i>
+                    <span>Balance Sheet</span>
+                </a>
+                <a href="#reports" class="nav-item" data-section="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <img id="user-avatar" src="" alt="User Avatar" class="avatar">
+                    <div class="user-info">
+                        <span id="display-username" class="username">User</span>
+                        <span class="role">Administrator</span>
+                    </div>
+                </div>
+                <button id="logout-btn" class="logout-btn-full">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Sections -->
+            <div id="sections-container">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="app-section">
+                    <div class="summary-cards">
+                        <div class="card stat-card">
+                            <div class="card-icon blue"><i class="fas fa-university"></i></div>
+                            <div class="card-content">
+                                <h3>Total Assets</h3>
+                                <p id="total-assets">0.00</p>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="card-icon orange"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="card-content">
+                                <h3>Total Liabilities</h3>
+                                <p id="total-liabilities">0.00</p>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="card-icon green"><i class="fas fa-chart-pie"></i></div>
+                            <div class="card-content">
+                                <h3>Net Profit/Loss</h3>
+                                <p id="net-profit-loss">0.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card chart-card">
+                            <h3>Assets vs Liabilities</h3>
+                            <canvas id="assetsLiabilitiesChart"></canvas>
+                        </div>
+                        <div class="card chart-card">
+                            <h3>Profit Trend</h3>
+                            <canvas id="profitTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card recent-table">
+                        <h3>Recent Transactions</h3>
+                        <div class="table-container">
+                            <table id="recent-transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Particulars</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Journal Entry Section -->
+                <section id="journal" class="app-section hidden">
+                    <div class="card">
+                        <h3>New Transaction</h3>
+                        <form id="journal-form" class="horizontal-form">
+                            <input type="hidden" id="edit-transaction-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <input type="date" id="journal-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Debit Account</label>
+                                    <select id="debit-account" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Credit Account</label>
+                                    <select id="credit-account" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Amount</label>
+                                    <input type="number" id="journal-amount" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Narration</label>
+                                <input type="text" id="journal-narration" placeholder="Enter narration..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Entry</button>
+                        </form>
+                    </div>
+
+                    <div class="card mt-4">
+                        <h3>Journal Entries</h3>
+                        <div class="table-container">
+                            <table id="journal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Particulars</th>
+                                        <th class="text-right">Debit</th>
+                                        <th class="text-right">Credit</th>
+                                        <th>Narration</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ledger Section -->
+                <section id="ledger" class="app-section hidden">
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>Ledger Account</h3>
+                            <select id="ledger-select" class="select-md"></select>
+                        </div>
+                        <div class="table-container mt-4">
+                            <table id="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Particulars</th>
+                                        <th class="text-right">Debit</th>
+                                        <th class="text-right">Credit</th>
+                                        <th class="text-right">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Trial Balance Section -->
+                <section id="trial-balance" class="app-section hidden">
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>Trial Balance</h3>
+                            <button class="btn btn-sm btn-outline export-pdf"
+                                data-table="trial-balance-table">PDF</button>
+                        </div>
+                        <div class="table-container mt-4">
+                            <table id="trial-balance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account Name</th>
+                                        <th class="text-right">Debit</th>
+                                        <th class="text-right">Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                    <tr id="trial-balance-footer">
+                                        <td><strong>Total</strong></td>
+                                        <td class="text-right"><strong id="tb-total-debit">0.00</strong></td>
+                                        <td class="text-right"><strong id="tb-total-credit">0.00</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div id="tb-status" class="alert mt-4"></div>
+                    </div>
+                </section>
+
+                <!-- Trading & P&L Section -->
+                <section id="trading-pl" class="app-section hidden">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="flex-between">
+                                <h3>Trading Account</h3>
+                                <button class="btn btn-sm btn-outline export-pdf"
+                                    data-table="trading-table">PDF</button>
+                            </div>
+                            <div class="table-container mt-4">
+                                <table id="trading-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Particulars</th>
+                                            <th class="text-right">Debit</th>
+                                            <th class="text-right">Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td><strong>Total</strong></td>
+                                            <td class="text-right"><strong id="trading-total-debit">0.00</strong></td>
+                                            <td class="text-right"><strong id="trading-total-credit">0.00</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="flex-between">
+                                <h3>Profit & Loss Account</h3>
+                                <button class="btn btn-sm btn-outline export-pdf" data-table="pl-table">PDF</button>
+                            </div>
+                            <div class="table-container mt-4">
+                                <table id="pl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Particulars</th>
+                                            <th class="text-right">Debit</th>
+                                            <th class="text-right">Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td><strong>Total</strong></td>
+                                            <td class="text-right"><strong id="pl-total-debit">0.00</strong></td>
+                                            <td class="text-right"><strong id="pl-total-credit">0.00</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Balance Sheet Section -->
+                <section id="balance-sheet" class="app-section hidden">
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>Balance Sheet</h3>
+                            <button class="btn btn-sm btn-outline export-pdf" data-table="bs-table">PDF</button>
+                        </div>
+                        <div class="table-container mt-4">
+                            <table id="bs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Assets</th>
+                                        <th class="text-right">Amount</th>
+                                        <th>Liabilities & Capital</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bs-body"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total Assets</strong></td>
+                                        <td class="text-right"><strong id="bs-total-assets">0.00</strong></td>
+                                        <td><strong>Total Liabilities & Capital</strong></td>
+                                        <td class="text-right"><strong id="bs-total-liabilities">0.00</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div id="bs-status" class="alert mt-4"></div>
+
+                        <!-- Financial Position Analysis Box -->
+                        <div id="financial-position-box" class="card mt-4 hidden">
+                            <h3>Financial Position Analysis</h3>
+                            <div id="fp-analysis-content" class="fp-container">
+                                <div class="fp-status-indicator">
+                                    <span id="fp-status-label">POSITIVE</span>
+                                </div>
+                                <div class="fp-details">
+                                    <p id="fp-description">Assets exceed liabilities by ₹0.00</p>
+                                    <small id="fp-accounting-check">Accounting Check: Assets = Liabilities +
+                                        Capital</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports" class="app-section hidden">
+                    <div class="card">
+                        <h3>Export Reports</h3>
+                        <p class="text-muted">Download your financial statements in various formats.</p>
+                        <div class="report-grid mt-4">
+                            <div class="report-item">
+                                <span>Trial Balance</span>
+                                <div class="export-btns">
+                                    <button class="btn btn-sm btn-primary export-pdf"
+                                        data-table="trial-balance-table">PDF</button>
+                                    <button class="btn btn-sm btn-secondary export-csv"
+                                        data-table="trial-balance-table">CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-item">
+                                <span>Trading Account</span>
+                                <div class="export-btns">
+                                    <button class="btn btn-sm btn-primary export-pdf"
+                                        data-table="trading-table">PDF</button>
+                                    <button class="btn btn-sm btn-secondary export-csv"
+                                        data-table="trading-table">CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-item">
+                                <span>Profit & Loss</span>
+                                <div class="export-btns">
+                                    <button class="btn btn-sm btn-primary export-pdf" data-table="pl-table">PDF</button>
+                                    <button class="btn btn-sm btn-secondary export-csv"
+                                        data-table="pl-table">CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-item">
+                                <span>Balance Sheet</span>
+                                <div class="export-btns">
+                                    <button class="btn btn-sm btn-primary export-pdf" data-table="bs-table">PDF</button>
+                                    <button class="btn btn-sm btn-secondary export-csv"
+                                        data-table="bs-table">CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
