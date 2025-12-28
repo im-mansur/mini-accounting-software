@@ -43,6 +43,9 @@ This project simplifies traditional accounting workflows by transforming raw tra
 
 ---
 
+
+
+
 ## 📂 Project Structure  
 
 mini-accounting-software/
