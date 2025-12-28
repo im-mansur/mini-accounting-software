@@ -39,7 +39,7 @@ This project simplifies traditional accounting workflows by transforming raw tra
 
 ## 📸 Preview  
 
-![Dashboard Preview](./preview.png)  
+![Dashboard Preview](https://github.com/im-mansur/mini-accounting-software/blob/main/finova.png)
 
 ---
 
