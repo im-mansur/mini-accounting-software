@@ -87,6 +87,7 @@ mini-accounting-software/
 
 📍 Project Type: Academic / Portfolio Accounting System  
 
+
 ---
 
 📌 *A practical implementation of accounting principles with automated financial reporting.*
